@@ -1,0 +1,116 @@
+= MediaConverter
+
+Convert in batches some formats into another.
+
+== CLI arguments
+
+[cols="3,1,3"]
+|===
+|Flag |Mandatory / Optional |Description
+
+|-c
+|O
+|Path to the configuration file.
+Default is `./config.json`.
+
+|-t
+|O
+|How may conversions are performed in parallel
+
+|-ft
+|O
+|FFMPEG threads (-threads option)
+
+|--ffprobe
+|O
+|Path to ffprobe
+
+|--ffmpeg
+|O
+|Path to ffmpeg
+|===
+
+== Configuration file
+
+Configuration is now declared in a json file with the following format:
+
+[source,json]
+----
+{
+  "conversions": [
+    {
+      "input": "/path/to/input",
+      "output": "/path/to/output",
+      "database": "/path/to/database.db",
+      "temp": "/path/to/temp",
+      "excluded": [
+        "subfolder/to/exclude",
+        "another/too"
+      ],
+      "processors": [
+        "VIDEO",
+        "AUDIO"
+      ],
+      "extensions": [
+        "mp4",
+        "mts",
+        "mp3"
+      ]
+    }
+  ]
+}
+----
+
+[cols="3,1,3a"]
+|===
+|Key |Mandatory / Optional |Description
+
+|conversions
+|O
+|List of conversions to perform
+
+|conversions.input
+|M
+|Path to the input folder.
+
+WARNING: This folder is scanned recursively
+
+|conversions.output
+|M
+|Path to the output folder.
+
+Structure will be kept the same as the input folder.
+
+|conversions.database
+|O
+|Path to a database file that will keep scan results between executions.
+This is useful if input folder is large and converted files never move.
+
+|conversions.temp
+|O
+|Path to a directory where temporary files (conversions in progress) will be placed
+
+|conversions.excluded
+|O
+|List of relative paths to be excluded from the conversion.
+
+|conversion.processors
+|O
+|List of processors to apply.
+If left empty, all of them will be applied.
+
+- VIDEO
+- AUDIO
+- TIFF
+
+|conversion.extensions
+|O
+|List of file extensions to process.
+If left empty the default one is used.
+|===
+
+=== Processors
+
+- VIDEO: `H264`, `VP9`, `WV3`, `MPEG2VIDEO` -> `HEVC`
+- AUDIO: `MP3` -> `AAC`
+- TIFF: `TIFF` -> `JPEG`
